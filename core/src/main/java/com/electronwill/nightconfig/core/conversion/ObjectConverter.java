@@ -6,7 +6,10 @@ import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 
 import java.lang.reflect.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -141,8 +144,17 @@ public final class ObjectConverter {
 				} catch (IllegalAccessException e) {// Unexpected: setAccessible is called if needed
 					throw new ReflectionException("Unable to parse the field " + field, e);
 				}
-				AnnotationUtils.checkField(field, value);/* Checks that the value is conform to an
+				try {
+					AnnotationUtils.checkField(field, value);/* Checks that the value is conform to an
 																eventual @SpecSometing annotation */
+				} catch (InvalidValueException ex) {
+					Object defaultValue = AnnotationUtils.getDefault(field);
+					if (defaultValue != null){
+						value = defaultValue;
+					} else {
+						throw ex;
+					}
+				}
 				Converter<Object, Object> converter = AnnotationUtils.getConverter(field);
 				if (converter != null) {
 					value = converter.convertFromField(value);
@@ -253,7 +265,16 @@ public final class ObjectConverter {
 							|| dstBottomType.isAssignableFrom(srcBottomType)) {
 
 							// Simple list, no conversion needed
-							AnnotationUtils.checkField(field, value);
+							try {
+								AnnotationUtils.checkField(field, value);
+							} catch (InvalidValueException ex) {
+								Object defaultValue = AnnotationUtils.getDefault(field);
+								if (defaultValue != null) {
+									value = defaultValue;
+								} else {
+									throw ex;
+								}
+							}
 							field.set(object, value);
 
 						} else {
@@ -281,9 +302,24 @@ public final class ObjectConverter {
 					} else {
 						// --- Read as a plain value ---
 						if (value == null && AnnotationUtils.mustPreserve(field, clazz)) {
-							AnnotationUtils.checkField(field, field.get(object));
+							// Annotation preferable rather default value, because primitive types initialize by zero
+							Object defaultValue = AnnotationUtils.getDefault(field);
+							if (defaultValue != null) {
+								field.set(object,defaultValue);
+							} else {
+								AnnotationUtils.checkField(field, field.get(object));
+							}
 						} else {
-							AnnotationUtils.checkField(field, value);
+							try {
+								AnnotationUtils.checkField(field, value);
+							} catch (InvalidValueException ex) {
+								Object defaultValue = AnnotationUtils.getDefault(field);
+								if (defaultValue != null) {
+									value = defaultValue;
+								} else {
+									throw ex;
+								}
+							}
                             if (field.getType().isEnum()) {
                                 Class<? extends Enum> enumType = (Class<? extends Enum>) field.getType();
                                 SpecEnum specEnum = field.getAnnotation(SpecEnum.class);

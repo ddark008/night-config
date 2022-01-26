@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * Utility class for the annotations.
@@ -159,6 +160,40 @@ final class AnnotationUtils {
 		if (specValidator != null) {
 			checkFieldSpec(field, value, specValidator);
 		}
+	}
+
+	/**
+	 * Returns default value specified by the Default annotation
+	 *  of the field. If there is no Default annotation, returns {@code null}.
+	 * @param field the field
+	 * @return the default value
+	 */
+	public static Object getDefault(Field field) {
+		DefaultInt defaultInt = field.getDeclaredAnnotation(DefaultInt.class);
+		if (defaultInt != null) return defaultInt.value();
+
+		DefaultLong defaultLong = field.getDeclaredAnnotation(DefaultLong.class);
+		if (defaultLong != null) return defaultLong.value();
+
+		DefaultFloat defaultFloat = field.getDeclaredAnnotation(DefaultFloat.class);
+		if (defaultFloat != null) return defaultFloat.value();
+
+		DefaultDouble defaultDouble = field.getDeclaredAnnotation(DefaultDouble.class);
+		if (defaultDouble != null) return defaultDouble.value();
+
+		DefaultSupplier defaultSupplier = field.getDeclaredAnnotation(DefaultSupplier.class);
+		if (defaultSupplier != null) {
+			final Supplier<Object> supplierInstance;
+			try {
+				Constructor<? extends Supplier<Object>> constructor = defaultSupplier.value().getDeclaredConstructor();
+				constructor.setAccessible(true);
+				supplierInstance = constructor.newInstance();
+			} catch (ReflectiveOperationException ex) {
+				throw new ReflectionException("Cannot create a supplier for field " + field, ex);
+			}
+			return supplierInstance.get();
+		}
+		return null;
 	}
 
 	private static void checkFieldSpec(Field field, Object value, SpecValidator spec) {
