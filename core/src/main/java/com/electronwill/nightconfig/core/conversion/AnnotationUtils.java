@@ -183,16 +183,28 @@ final class AnnotationUtils {
 
 		DefaultSupplier defaultSupplier = field.getDeclaredAnnotation(DefaultSupplier.class);
 		if (defaultSupplier != null) {
-			final Supplier<Object> supplierInstance;
 			try {
 				Constructor<? extends Supplier<Object>> constructor = defaultSupplier.value().getDeclaredConstructor();
 				constructor.setAccessible(true);
-				supplierInstance = constructor.newInstance();
+				return constructor.newInstance().get();
 			} catch (ReflectiveOperationException ex) {
 				throw new ReflectionException("Cannot create a supplier for field " + field, ex);
 			}
-			return supplierInstance.get();
 		}
+
+		DefaultConversion defaultConversion = field.getDeclaredAnnotation(DefaultConversion.class);
+		if (defaultConversion != null) {
+			try {
+				Constructor<? extends Converter> constructor = defaultConversion.converter().getDeclaredConstructor();
+				constructor.setAccessible(true);
+				Converter<Object,Object> converterInstance = constructor.newInstance();
+				Object defaultValue = defaultConversion.value();
+				return converterInstance.convertToField(defaultValue);
+			} catch (ReflectiveOperationException ex) {
+				throw new ReflectionException("Cannot create a converter for field " + field, ex);
+			}
+		}
+
 		return null;
 	}
 
