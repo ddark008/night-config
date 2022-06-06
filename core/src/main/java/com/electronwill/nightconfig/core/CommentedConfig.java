@@ -76,7 +76,9 @@ public interface CommentedConfig extends UnmodifiableCommentedConfig, Config {
 			Map<String, CommentNode> children = node.getChildren();
 			if (children != null) {
 				CommentedConfig config = getRaw(Collections.singletonList(key));
-				config.putAllComments(children);
+				if (config != null) {
+					config.putAllComments(children);
+				}
 			}
 		}
 	}
@@ -97,7 +99,9 @@ public interface CommentedConfig extends UnmodifiableCommentedConfig, Config {
 			Object value = entry.getValue();
 			if (value instanceof UnmodifiableCommentedConfig) {
 				CommentedConfig config = getRaw(Collections.singletonList(key));
-				config.putAllComments((UnmodifiableCommentedConfig)value);
+				if (config != null) {
+					config.putAllComments((UnmodifiableCommentedConfig) value);
+				}
 			}
 
 		}
@@ -207,7 +211,7 @@ public interface CommentedConfig extends UnmodifiableCommentedConfig, Config {
 	static CommentedConfig of(ConfigFormat<? extends CommentedConfig> format) {
 		return new SimpleCommentedConfig(format, false);
 	}
-	
+
 	/**
 	 * Creates a Config backed by a certain kind of map, given by a supplier.
 	 *
@@ -269,11 +273,11 @@ public interface CommentedConfig extends UnmodifiableCommentedConfig, Config {
 	static CommentedConfig copy(UnmodifiableConfig config) {
 		return new SimpleCommentedConfig(config, config.configFormat(), false);
 	}
-	
+
 	/**
 	 * Creates a new CommentedConfig with the content of the given config. The returned config will
 	 * have the same format as the copied config, and be backed by the given supplier.
-	 * 
+	 *
 	 * @see #of(Supplier, ConfigFormat)
 	 *
 	 * @param config the config to copy
@@ -294,11 +298,11 @@ public interface CommentedConfig extends UnmodifiableCommentedConfig, Config {
 	static CommentedConfig copy(UnmodifiableConfig config, ConfigFormat<?> format) {
 		return new SimpleCommentedConfig(config, format, false);
 	}
-	
+
 	/**
 	 * Creates a new CommentedConfig with the content of the given config. The returned config will
 	 * be backed by the given map supplier.
-	 * 
+	 *
 	 * @see #of(Supplier, ConfigFormat)
 	 *
 	 * @param config the config to copy
@@ -332,7 +336,7 @@ public interface CommentedConfig extends UnmodifiableCommentedConfig, Config {
 	static CommentedConfig copy(UnmodifiableCommentedConfig config, Supplier<Map<String, Object>> mapCreator) {
 		return new SimpleCommentedConfig(config, mapCreator, config.configFormat());
 	}
-	
+
 	/**
 	 * Creates a new CommentedConfig with the content of the given config.
 	 *
@@ -343,11 +347,11 @@ public interface CommentedConfig extends UnmodifiableCommentedConfig, Config {
 	static CommentedConfig copy(UnmodifiableCommentedConfig config, ConfigFormat<?> format) {
 		return new SimpleCommentedConfig(config, format, false);
 	}
-	
+
 	/**
 	 * Creates a new CommentedConfig with the content of the given config. The returned config will
 	 * be backed by the given map supplier.
-	 * 
+	 *
 	 * @see #of(Supplier, ConfigFormat)
 	 *
 	 * @param config the config to copy
