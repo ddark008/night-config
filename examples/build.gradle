@@ -13,6 +13,7 @@ repositories {
 
 dependencies {
 	implementation project(':toml')
+	implementation project(':core')
 	implementation project(':json')
 }
 
