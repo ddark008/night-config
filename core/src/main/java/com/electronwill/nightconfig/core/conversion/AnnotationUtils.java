@@ -181,6 +181,12 @@ final class AnnotationUtils {
 		DefaultDouble defaultDouble = field.getDeclaredAnnotation(DefaultDouble.class);
 		if (defaultDouble != null) return defaultDouble.value();
 
+		DefaultString defaultString = field.getDeclaredAnnotation(DefaultString.class);
+		if (defaultString != null) return defaultString.value();
+
+		DefaultBoolean defaultBoolean = field.getDeclaredAnnotation(DefaultBoolean.class);
+		if (defaultBoolean != null) return defaultBoolean.value();
+
 		DefaultSupplier defaultSupplier = field.getDeclaredAnnotation(DefaultSupplier.class);
 		if (defaultSupplier != null) {
 			try {
