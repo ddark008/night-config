@@ -11,7 +11,7 @@ import static com.electronwill.nightconfig.core.utils.StringUtils.split;
  * Represents a specification for a configuration. With a ConfigSpec you can define mandatory
  * "properties" that the config's values must have and then check that the config is correct, and
  * even correct it automatically!
- * <h1>Defining entries</h1>
+ * <h2>Defining entries</h2>
  * <p>
  * Use the "define" methods to define that some entry must be present in the config, and how its
  * value must be. You have to specify - at least - the path of the value and a default value that
@@ -19,7 +19,7 @@ import static com.electronwill.nightconfig.core.utils.StringUtils.split;
  * For instance, the following code defines a value with path "a.b" and which must be a String:
  * <pre>configSpec.define("a.b", "defaultString");</pre>
  *
- * <h2>Validators</h2>
+ * <h3>Validators</h3>
  * <p>
  * Some methods (like the one used in the previous paragraph) automatically generate the rules that
  * make a config value correct or incorrect. But you can provide your own rule by specifying a
@@ -28,14 +28,14 @@ import static com.electronwill.nightconfig.core.utils.StringUtils.split;
  * For instance, this defines a value "arraylist" that must be an {@code ArrayList}:
  * {@code configSpec.define("arraylist", new ArrayList(), o -> o instanceof ArrayList);}
  *
- * <h2>Suppliers of default value</h2>
+ * <h3>Suppliers of default value</h3>
  * <p>
  * If the default value is heavy to create you should use a {@link Supplier} instead of creating a
  * default value, which is useless if the config's value happens to be correct.<br>
  * For instance, the code in the previous paragraph could be rewritten like this:
  * {@code configSpec.define("heavy", () -> new ArrayList(), o -> o instanceof ArrayList);}
  *
- * <h1>Checking configurations</h1>
+ * <h2>Checking configurations</h2>
  * <p>
  * Use the "isCorrect" methods to check whether a configuration is correct or not. A configuration
  * is correct if and only if:*
@@ -45,7 +45,7 @@ import static com.electronwill.nightconfig.core.utils.StringUtils.split;
  * <li>Each entry in the config has a correct value according to the spec.
  * </ol>
  *
- * <h1>Correcting configurations</h1>
+ * <h2>Correcting configurations</h2>
  * <p>
  * Use the "correct" methods to correct a configuration. The correction behaves like this:
  * <ol>
