@@ -302,7 +302,7 @@ public final class ObjectConverter {
 					} else {
 						// --- Read as a plain value ---
 						// Check on null and type mismatch
-						if ((value == null && AnnotationUtils.mustPreserve(field, clazz)) || !(field.getType().isInstance(value))) {
+						if (value == null && AnnotationUtils.mustPreserve(field, clazz)) {
 							// Annotation preferable rather default value, because primitive types initialize by zero
 							Object defaultValue = AnnotationUtils.getDefault(field);
 							if (defaultValue != null) {
